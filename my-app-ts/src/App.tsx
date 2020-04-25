@@ -1,11 +1,25 @@
 import React, { useContext, useEffect } from 'react';
-import './App.css';
+import './index.css';
 import { store } from './Store';
+
+interface IEpisode {
+  airdate: string,
+  airstamp: string,
+  airtime: string,
+  id: number,
+  image: { medium: string, original: string },
+  name: string,
+  number: number,
+  runtime: number,
+  season: number,
+  summary: string,
+  url: string
+}
 
 function App(): JSX.Element {
   const { state, dispatch } = useContext(store);
 
-  useEffect(()=>{
+  useEffect(() => {
     state.episodes.length === 0 && fetchData()
   })
 
@@ -20,8 +34,23 @@ function App(): JSX.Element {
   }
   return (
     <div>
-      {console.log(state)}
-      <h1>Rick and Morty</h1>
+      <header className="header">
+        <h1>Rick and Morty</h1>
+        <p>Pick your favouite episode!!!</p>
+      </header>
+      <section className="episode-layout">
+        {state.episodes.map((episode: IEpisode) => {
+          return (
+            <section key={episode.id} className="episode-box">
+              <img src={episode.image?.medium} alt={`Rick and Mort ${episode.name}`} />
+              <div>{episode.name}</div>
+              <section>
+                Season: {episode.season} Number: {episode.number}
+              </section>
+            </section>
+          )
+        })}
+      </section>
     </div>
   );
 }
