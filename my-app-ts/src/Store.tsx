@@ -1,14 +1,5 @@
 import React, { createContext, useReducer } from 'react'
-
-interface IState {
-    episodes: Array<any>,
-    favourites: Array<any>
-};
-
-interface IAction {
-    type: string,
-    payload: any
-}
+import { IState, IAction } from './interfaces/Interface';
 
 const initialState: IState = { episodes: [], favourites: [] };
 

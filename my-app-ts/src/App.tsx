@@ -1,20 +1,9 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, lazy, Suspense } from 'react';
 import './index.css';
 import { store } from './Store';
+import { IEpisode } from './interfaces/Interface';
 
-interface IEpisode {
-  airdate: string,
-  airstamp: string,
-  airtime: string,
-  id: number,
-  image: { medium: string, original: string },
-  name: string,
-  number: number,
-  runtime: number,
-  season: number,
-  summary: string,
-  url: string
-}
+const EpisodeList = lazy<any>(() => import("./EpisodeList"));
 
 function App(): JSX.Element {
   const { state, dispatch } = useContext(store);
@@ -48,28 +37,24 @@ function App(): JSX.Element {
     }
     return dispatch(dispatchObj)
   }
+
+  const props = {
+    episodes: state.episodes,
+    toggleFavAction,
+    favourites: state.favourites
+  }
+
   return (
     <div>
       <header className="header">
         <h1>Rick and Morty</h1>
         <p>Pick your favouite episode!!! {state.favourites.length}</p>
       </header>
-      <section className="episode-layout">
-        {state.episodes.map((episode: IEpisode) => {
-          return (
-            <section key={episode.id} className="episode-box">
-              <img src={episode.image?.medium} alt={`Rick and Mort ${episode.name}`} />
-              <div>{episode.name}</div>
-              <section>
-                <div>Season: {episode.season} Number: {episode.number}</div>
-                <button type="button" onClick={() => toggleFavAction(episode)}>
-                  {state.favourites.find((fav: IEpisode) => fav.id === episode.id) ? "Remove Fav" : "Add Fav"}
-                </button>
-              </section>
-            </section>
-          )
-        })}
-      </section>
+      <Suspense fallback={<div>loading...</div>}>
+        <section className="episode-layout">
+          <EpisodeList  {...props } />
+        </section>
+      </Suspense>
     </div>
   );
 }
