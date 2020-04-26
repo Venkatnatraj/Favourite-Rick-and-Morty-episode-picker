@@ -31,12 +31,28 @@ function App(): JSX.Element {
       type: "FETCH_DATA",
       payload: jsonData._embedded.episodes
     })
+  };
+
+  const toggleFavAction = (episode: IEpisode) => {
+    const episodeInFav = state.favourites.includes(episode);
+    let dispatchObj = {
+      type: "ADD_FAV",
+      payload: episode
+    }
+    if (episodeInFav) {
+      const favWithoutEpisode = state.favourites.filter((fav: IEpisode) => fav.id !== episode.id)
+      dispatchObj = {
+        type: "REMOVE_FAV",
+        payload: favWithoutEpisode
+      }
+    }
+    return dispatch(dispatchObj)
   }
   return (
     <div>
       <header className="header">
         <h1>Rick and Morty</h1>
-        <p>Pick your favouite episode!!!</p>
+        <p>Pick your favouite episode!!! {state.favourites.length}</p>
       </header>
       <section className="episode-layout">
         {state.episodes.map((episode: IEpisode) => {
@@ -45,7 +61,10 @@ function App(): JSX.Element {
               <img src={episode.image?.medium} alt={`Rick and Mort ${episode.name}`} />
               <div>{episode.name}</div>
               <section>
-                Season: {episode.season} Number: {episode.number}
+                <div>Season: {episode.season} Number: {episode.number}</div>
+                <button type="button" onClick={() => toggleFavAction(episode)}>
+                  {state.favourites.find((fav: IEpisode) => fav.id === episode.id) ? "Remove Fav" : "Add Fav"}
+                </button>
               </section>
             </section>
           )
